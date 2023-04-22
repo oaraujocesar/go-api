@@ -9,19 +9,19 @@ import (
 	"gorm.io/gorm"
 )
 
-func createInMemoryDatabase(t *testing.T) (*gorm.DB, error) {
+func createInMemoryDatabase(t *testing.T, table interface{}) (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	db.AutoMigrate(&entity.User{})
+	db.AutoMigrate(table)
 
 	return db, nil
 }
 
 func TestCreateUser(t *testing.T) {
-	db, err := createInMemoryDatabase(t)
+	db, err := createInMemoryDatabase(t, &entity.User{})
 
 	user, _ := entity.NewUser("Cesar", "test@mail.com", "12341234")
 	assert.Nil(t, err)
@@ -44,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestFindUserByEmail(t *testing.T) {
-	db, err := createInMemoryDatabase(t)
+	db, err := createInMemoryDatabase(t, &entity.User{})
 
 	user, _ := entity.NewUser("Cesar", "test@mail.com", "12341234")
 	assert.Nil(t, err)
@@ -66,7 +66,7 @@ func TestFindUserByEmail(t *testing.T) {
 }
 
 func TestFindByEmailWhenUserDoesNotExists(t *testing.T) {
-	db, err := createInMemoryDatabase(t)
+	db, err := createInMemoryDatabase(t, &entity.User{})
 	assert.Nil(t, err)
 
 	userDB := NewUser(db)
