@@ -43,6 +43,26 @@ func TestCreateUser(t *testing.T) {
 	assert.NotNil(t, userFound.Password)
 }
 
+func TestCreateUserWhenEmailIsAlreadyRegistered(t *testing.T) {
+	db, err := createInMemoryDatabase(t, &entity.User{})
+	assert.Nil(t, err)
+
+	userDB := NewUser(db)
+
+	user, err := entity.NewUser("Cesar", "test@mail.com", "123123")
+	assert.Nil(t, err)
+
+	err = userDB.Create(user)
+	assert.Nil(t, err)
+
+	user2, err := entity.NewUser("Cesar 2", "test@mail.com", "123123")
+	assert.Nil(t, err)
+
+	err = userDB.Create(user2)
+	assert.NotNil(t, err)
+	assert.EqualError(t, err, "user already exists")
+}
+
 func TestFindUserByEmail(t *testing.T) {
 	db, err := createInMemoryDatabase(t, &entity.User{})
 
