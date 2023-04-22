@@ -13,7 +13,6 @@ type User struct {
 }
 
 func NewUser(name, email, password string) (*User, error) {
-
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
